@@ -103,7 +103,7 @@ public class DVTable {
 			System.out.println("[" + new Timestamp(new Date().getTime())
 					+ "] Link " + selfDV.getId() + "-" + vectorID + " up! ");
 			vectorsRecieved.put(vectorID, dVetor);
-			updateWhenCostChange(vectorID, false);
+			updateWhenCostChange(vectorID);
 			router.getLink(dVetor.getId()).setRecovery(false);
 			return;
 		}
@@ -116,7 +116,7 @@ public class DVTable {
 			System.out.println("Link " + selfDV.getId() + "-" + vectorID
 					+ " up! ");
 			vectorsRecieved.put(vectorID, dVetor);
-			updateWhenCostChange(vectorID, false);
+			updateWhenCostChange(vectorID);
 			return;
 		}
 
@@ -126,7 +126,7 @@ public class DVTable {
 			System.out.print("[" + new Timestamp(new Date().getTime())
 					+ "] Recieved vector '" + vectorID + "'. ");
 			vectorsRecieved.put(vectorID, dVetor);
-			updateWhenCostChange(vectorID, false);
+			updateWhenCostChange(vectorID);
 			return;
 		}
 	}
@@ -168,18 +168,11 @@ public class DVTable {
 	 * @param isDown
 	 *            Indica se a atualização acontece a partir da queda do link
 	 */
-	private void updateWhenCostChange(int id, boolean isDown) {
+	private void updateWhenCostChange(int id) {
 		// Pega vetor recebido do vizinho
 		DistanceVector vectorBeforeChange = selfDV.clone();
 		DistanceVector vDist = vectorsRecieved.get(id);
 		Integer linkCost = router.getLink(id).getCost();
-
-		// Esse parâmetro e o if estão bem seboso mesmo, mas depois de 14h
-		// programando não estou com coragem de pensar mais em uma solução
-		// melhor. Quem sabe um dia eu arrumo isso. xD
-		if (isDown) {
-			selfDV.putDistance(id, UNREACHABLE);
-		}
 
 		for (Integer key : selfDV.getDistances().keySet()) {
 			Integer cost = selfDV.getDistances().get(key);
@@ -203,6 +196,28 @@ public class DVTable {
 		}
 	}
 
+	private void updateWhenCostChangeAfterLinkDown(Integer vectorID) {
+		// Pega vetor recebido do vizinho
+		DistanceVector vDist = vectorsRecieved.get(vectorID);
+		Integer linkCost = router.getLink(vectorID).getCost();
+		
+		for (Integer key : selfDV.getDistances().keySet()) {
+			Integer cost = selfDV.getDistances().get(key);
+			if (cost > linkCost + vDist.getDistances().get(key)) {
+				selfDV.putDistance(key, linkCost
+						+ vDist.getDistances().get(key));
+	
+				// Caso ultrapasse o diâmetro da rede, avisa e para
+				if (linkCost + vDist.getDistances().get(key) >= UNREACHABLE) {
+					System.out.println("\n\n["
+							+ new Timestamp(new Date().getTime())
+							+ "] LOOP DETECTED: Router down.");
+					System.exit(1);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Atualiza a tabela caso algum enalace caia. No caso ele marca o roteador
 	 * vizinho com UNREACHABLE e atualiza o vetor distância do roteador a partir
@@ -214,11 +229,19 @@ public class DVTable {
 	public void updateWhenLinkDown(int id) {
 		System.out.print("[" + new Timestamp(new Date().getTime())
 				+ "] Link down: " + selfDV.getId() + "-" + id + ". ");
-
+		
+		DistanceVector vectorBeforeChange = selfDV.clone();
+		selfDV.putDistance(id, UNREACHABLE);
 		for (Integer key : vectorsRecieved.keySet()) {
-			if (key != selfDV.getId()) {
-				updateWhenCostChange(id, true);
-			}
+			updateWhenCostChangeAfterLinkDown(key);
 		}
+		
+		if (compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
+			System.out.println("Cost changed to: " + selfDV.toString());	
+		} else {
+			System.out.println("No changed: " + selfDV.toString());
+		}
+		
 	}
+	
 }
