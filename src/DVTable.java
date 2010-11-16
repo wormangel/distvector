@@ -196,17 +196,25 @@ public class DVTable {
 		}
 	}
 
+	/**
+	 * Quando um link cai, o caminho ate D é marcado como infinito, assim como o
+	 * custo do enlace. Em seguida atualiza o vetor distância a partir dos
+	 * vetores já contidos na tabela.
+	 * 
+	 * @param vectorID
+	 *            Id do roteador o qual o enlace caiu.
+	 */
 	private void updateWhenCostChangeAfterLinkDown(Integer vectorID) {
 		// Pega vetor recebido do vizinho
 		DistanceVector vDist = vectorsRecieved.get(vectorID);
 		Integer linkCost = router.getLink(vectorID).getCost();
-		
+
 		for (Integer key : selfDV.getDistances().keySet()) {
 			Integer cost = selfDV.getDistances().get(key);
 			if (cost > linkCost + vDist.getDistances().get(key)) {
 				selfDV.putDistance(key, linkCost
 						+ vDist.getDistances().get(key));
-	
+
 				// Caso ultrapasse o diâmetro da rede, avisa e para
 				if (linkCost + vDist.getDistances().get(key) >= UNREACHABLE) {
 					System.out.println("\n\n["
@@ -229,19 +237,19 @@ public class DVTable {
 	public void updateWhenLinkDown(int id) {
 		System.out.print("[" + new Timestamp(new Date().getTime())
 				+ "] Link down: " + selfDV.getId() + "-" + id + ". ");
-		
+
 		DistanceVector vectorBeforeChange = selfDV.clone();
 		selfDV.putDistance(id, UNREACHABLE);
 		for (Integer key : vectorsRecieved.keySet()) {
 			updateWhenCostChangeAfterLinkDown(key);
 		}
-		
+
 		if (compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
-			System.out.println("Cost changed to: " + selfDV.toString());	
+			System.out.println("Cost changed to: " + selfDV.toString());
 		} else {
 			System.out.println("No changed: " + selfDV.toString());
 		}
-		
+
 	}
-	
+
 }
