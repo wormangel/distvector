@@ -197,7 +197,7 @@ public class Router {
 	public void setLinkDown(Link link) {
 		if (link.isLinkUp()) {
 			link.setLinkUp(false);
-			dvTable.updateWhenLinkDown(link.getRouterConnected().getId());
+			dvTable.linkDownUpdate(link.getRouterConnected().getId());
 		}
 	}
 
@@ -227,10 +227,6 @@ public class Router {
 	 *            Vetor distância recebido
 	 */
 	public void updateDVTable(DistanceVector dv) {
-		// System.out.println("[" + new Timestamp(new Date().getTime())
-		// + "] Recieved vector: " + dv.toString() + " by router " +
-		// dv.getId());
-
 		// Marca o enlace como ativo e zera o timeout pois recebeu novo vetor
 		// dele
 		Link link = getLink(dv.getId());
@@ -238,7 +234,7 @@ public class Router {
 			link.clearTimeout();
 		}
 		// Repassa para a tabela de vetores ser atualizada
-		dvTable.updateNewVectorRecieved(dv);
+		dvTable.vectorRecievedUpdate(dv);
 
 	}
 

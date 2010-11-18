@@ -40,12 +40,51 @@ public class DVTable {
 	}
 
 	/**
-	 * Recupera vetor distância do roteador
+	 * Atualiza o valor do vetor distância atual quando o custo ate algum
+	 * caminho muda.
 	 * 
-	 * @return Vetor Distância
+	 * @param dv
+	 *            Id do vetor distância
+	 * @param isDown
+	 *            Indica se a atualização acontece a partir da queda do link
 	 */
-	public DistanceVector getDistanceVector() {
-		return selfDV;
+	private void calculateDistances() {
+		resetSelfDV();
+
+		Integer linkCost;
+		Integer currentCost;
+		Integer neighborCost;
+
+		for (Integer vectorID : vectorsRecieved.keySet()) {
+			linkCost = router.getLink(vectorID).getCost();
+			for (Integer distanceTo : selfDV.getDistances().keySet()) {
+				currentCost = selfDV.getDistances().get(distanceTo);
+				neighborCost = linkCost
+						+ vectorsRecieved.get(vectorID).getDistances()
+								.get(distanceTo);
+				// Verifica se o custo pelo vizinho é menor
+				if (currentCost > neighborCost) {
+					selfDV.putDistance(distanceTo, neighborCost);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Metodo criado para tratar as mensagens de log.
+	 * @param log String de log
+	 */
+	private void calculateDistances(String log) {
+		System.out.print(log + " ");
+		DistanceVector vectorBeforeChange = selfDV.clone();
+		
+		calculateDistances();
+		
+		if (!compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
+			System.out.println("Cost changed to: " + selfDV.toString());
+		} else {
+			//System.out.println("No change.");
+		}
 	}
 
 	/**
@@ -85,50 +124,24 @@ public class DVTable {
 	}
 
 	/**
-	 * Atualiza o vetor distância atual apos o recebimento do vetor distância do
-	 * vizinho
+	 * Recupera vetor distância do roteador
 	 * 
-	 * @param dVetor
-	 *            Vetor do vizinho
+	 * @return Vetor Distância
 	 */
-	public void updateNewVectorRecieved(DistanceVector dVetor) {
-		Integer vectorID = dVetor.getId();
+	public DistanceVector getDistanceVector() {
+		return selfDV;
+	}
 
-		// Descobre novos roteadores
-		routerDiscovery(dVetor);
-
-		// Se não encontrar o ID do router no mapa de vetores então
-		// adiciona como novo e marca o enlace com UP
-		if (!vectorsRecieved.containsKey(vectorID)) {
-			System.out.println("[" + new Timestamp(new Date().getTime())
-					+ "] Link " + selfDV.getId() + "-" + vectorID + " up! ");
-			vectorsRecieved.put(vectorID, dVetor);
-			updateWhenCostChange(vectorID);
-			router.getLink(dVetor.getId()).setRecovery(false);
-			return;
-		}
-
-		// Apenas para indicar se o link se reconectou.
-		// Condição: Indicador de recuperação de queda && id já esta na tabela.
-		Link link = router.getLink(dVetor.getId());
-		if (link.getRecovery() && vectorsRecieved.containsKey(vectorID)) {
-			link.setRecovery(false);
-			System.out.println("Link " + selfDV.getId() + "-" + vectorID
-					+ " up! ");
-			vectorsRecieved.put(vectorID, dVetor);
-			updateWhenCostChange(vectorID);
-			return;
-		}
-
-		// Se o vetor recebido foi modificado, atualiza a tabela de vetores.
-		// if (!vectorsRecieved.get(vectorID).equals(dVetor)) {
-		if (!compareVectorsAreEquals(vectorsRecieved.get(vectorID), dVetor)) {
-			System.out.print("[" + new Timestamp(new Date().getTime())
-					+ "] Recieved vector '" + vectorID + "'. ");
-			vectorsRecieved.put(vectorID, dVetor);
-			updateWhenCostChange(vectorID);
-			return;
-		}
+	/**
+	 * Atualiza a tabela caso algum enalace caia.
+	 * 
+	 * @param id
+	 *            Id do roteador na outra ponta do enlace.
+	 */
+	public void linkDownUpdate(int id) {
+		String log = "[" + new Timestamp(new Date().getTime())
+				+ "] Link down: " + selfDV.getId() + "-" + id + ". ";
+		calculateDistances(log);
 	}
 
 	/**
@@ -160,96 +173,56 @@ public class DVTable {
 	}
 
 	/**
-	 * Atualiza o valor do vetor distância atual quando o custo ate algum
-	 * caminho muda.
-	 * 
-	 * @param id
-	 *            Id do vetor distância
-	 * @param isDown
-	 *            Indica se a atualização acontece a partir da queda do link
+	 * Reinicia o próprio vetor para recalcular os custos
 	 */
-	private void updateWhenCostChange(int id) {
-		// Pega vetor recebido do vizinho
-		DistanceVector vectorBeforeChange = selfDV.clone();
-		DistanceVector vDist = vectorsRecieved.get(id);
-		Integer linkCost = router.getLink(id).getCost();
-
+	private void resetSelfDV() {
 		for (Integer key : selfDV.getDistances().keySet()) {
-			Integer cost = selfDV.getDistances().get(key);
-			if (cost > linkCost + vDist.getDistances().get(key)) {
-				selfDV.putDistance(key, linkCost
-						+ vDist.getDistances().get(key));
-
-				// Caso ultrapasse o diâmetro da rede, avisa e para
-				if (linkCost + vDist.getDistances().get(key) >= UNREACHABLE) {
-					System.out.println("["
-							+ new Timestamp(new Date().getTime())
-							+ "] LOOP DETECTED: Router down.");
-					System.exit(1);
-				}
-			}
+			selfDV.putDistance(key, UNREACHABLE);
 		}
-		if (!compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
-			System.out.println("Cost changed to: " + selfDV.toString());
-		} else {
-			System.out.println("No change.");
-		}
+		selfDV.putDistance(selfDV.getId(), 0);
 	}
 
 	/**
-	 * Quando um link cai, o caminho ate D é marcado como infinito, assim como o
-	 * custo do enlace. Em seguida atualiza o vetor distância a partir dos
-	 * vetores já contidos na tabela.
+	 * Atualiza o vetor distância atual apos o recebimento do vetor distância do
+	 * vizinho
 	 * 
-	 * @param vectorID
-	 *            Id do roteador o qual o enlace caiu.
+	 * @param dVetor
+	 *            Vetor do vizinho
 	 */
-	private void updateWhenCostChangeAfterLinkDown(Integer vectorID) {
-		// Pega vetor recebido do vizinho
-		DistanceVector vDist = vectorsRecieved.get(vectorID);
-		Integer linkCost = router.getLink(vectorID).getCost();
+	public void vectorRecievedUpdate(DistanceVector dVetor) {
+		Integer vectorID = dVetor.getId();
 
-		for (Integer key : selfDV.getDistances().keySet()) {
-			Integer cost = selfDV.getDistances().get(key);
-			if (cost > linkCost + vDist.getDistances().get(key)) {
-				selfDV.putDistance(key, linkCost
-						+ vDist.getDistances().get(key));
+		// Descobre novos roteadores
+		routerDiscovery(dVetor);
 
-				// Caso ultrapasse o diâmetro da rede, avisa e para
-				if (linkCost + vDist.getDistances().get(key) >= UNREACHABLE) {
-					System.out.println("\n\n["
-							+ new Timestamp(new Date().getTime())
-							+ "] LOOP DETECTED: Router down.");
-					System.exit(1);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Atualiza a tabela caso algum enalace caia. No caso ele marca o roteador
-	 * vizinho com UNREACHABLE e atualiza o vetor distância do roteador a partir
-	 * dos outros vetores já armazenados.
-	 * 
-	 * @param id
-	 *            Id do roteador na outra ponta do enlace.
-	 */
-	public void updateWhenLinkDown(int id) {
-		System.out.print("[" + new Timestamp(new Date().getTime())
-				+ "] Link down: " + selfDV.getId() + "-" + id + ". ");
-
-		DistanceVector vectorBeforeChange = selfDV.clone();
-		selfDV.putDistance(id, UNREACHABLE);
-		for (Integer key : vectorsRecieved.keySet()) {
-			updateWhenCostChangeAfterLinkDown(key);
+		// Se não encontrar o ID do router no mapa de vetores então
+		// adiciona como novo e marca o enlace com UP
+		if (!vectorsRecieved.containsKey(vectorID)) {
+			String log = "[" + new Timestamp(new Date().getTime()) + "] Link "
+					+ selfDV.getId() + "-" + vectorID + " up!";
+			vectorsRecieved.put(vectorID, dVetor);
+			calculateDistances(log);
+			router.getLink(dVetor.getId()).setRecovery(false);
+			return;
 		}
 
-		if (compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
-			System.out.println("Cost changed to: " + selfDV.toString());
-		} else {
-			System.out.println("No changed: " + selfDV.toString());
+		// Apenas para indicar se o link se reconectou.
+		// Condição: Indicador de recuperação de queda && id já esta na tabela.
+		Link link = router.getLink(dVetor.getId());
+		if (link.getRecovery() && vectorsRecieved.containsKey(vectorID)) {
+			link.setRecovery(false);
+			String log = "Link " + selfDV.getId() + "-" + vectorID + " up!";
+			vectorsRecieved.put(vectorID, dVetor);
+			calculateDistances(log);
+			return;
 		}
 
+//		String log = "[" + new Timestamp(new Date().getTime())
+//				+ "] Recieved vector: " + dVetor.toString() + " by router "
+//				+ vectorID;
+		String log = "";
+		vectorsRecieved.put(vectorID, dVetor);
+		calculateDistances(log);
 	}
 
 }
