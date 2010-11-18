@@ -109,6 +109,7 @@ public class InitRouter {
 		HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
 		ArrayList<Link> links = readLinksFile(routerID, routersConfig);
 
+		System.out.println("Starting router " + routerID);
 		new Router(routersConfig.get(routerID), links);
 	}
 
