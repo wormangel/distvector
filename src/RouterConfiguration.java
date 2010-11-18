@@ -1,7 +1,9 @@
 /**
  * Representacao das configuracoes do roteador que serao lidas do arquivo.
  * 
- * @author otacilio
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
  * 
  */
 public class RouterConfiguration {

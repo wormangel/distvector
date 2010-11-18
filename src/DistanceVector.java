@@ -1,5 +1,13 @@
 import java.util.HashMap;
 
+/**
+ * Representa um vetor distância
+ * 
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
+ * 
+ */
 public class DistanceVector {
 
 	private Integer id;
@@ -43,7 +51,7 @@ public class DistanceVector {
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 	public DistanceVector clone() {
 		DistanceVector clone = new DistanceVector(getId());
 		for (Integer key : getDistances().keySet()) {

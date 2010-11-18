@@ -1,8 +1,9 @@
-
 /**
  * Representa o enlace
  * 
- * @author otacilio
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
  * 
  */
 public class Link {
@@ -37,7 +38,9 @@ public class Link {
 
 	/**
 	 * Marca o tempo em que o enlace conseguiu ser utilizado a última vez.
-	 * @param Momento da última atividade que ocorreu no enlace
+	 * 
+	 * @param Momento
+	 *            da última atividade que ocorreu no enlace
 	 */
 	public void setLastActivity(long last) {
 		this.lastActivity = last;

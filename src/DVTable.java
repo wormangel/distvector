@@ -3,6 +3,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * Tabela que armazena o vetor distância atual e os vetores distância dos
+ * roteadores vizinhos
+ * 
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
+ * 
+ */
 public class DVTable {
 
 	static final Integer UNREACHABLE = 9999; // Diâmetro da rede.
@@ -78,10 +87,8 @@ public class DVTable {
 	 *            String de log
 	 */
 	private void calculateDistances(String log) {
-		if (!log.isEmpty()) {
-			System.out.print("[" + new Timestamp(new Date().getTime()) + "] "
-					+ log + " ");
-		}
+		System.out.print("[" + new Timestamp(new Date().getTime()) + "] " + log
+				+ " ");
 		DistanceVector vectorBeforeChange = selfDV.clone();
 
 		calculateDistances();
@@ -226,9 +233,8 @@ public class DVTable {
 		// String log = "[" + new Timestamp(new Date().getTime())
 		// + "] Recieved vector: " + dVetor.toString() + " by router "
 		// + vectorID;
-		String log = "";
 		vectorsRecieved.put(vectorID, dVetor);
-		calculateDistances(log);
+		calculateDistances();
 	}
 
 }

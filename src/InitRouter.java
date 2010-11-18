@@ -11,7 +11,9 @@ import java.util.HashMap;
 /**
  * Inicializa o roteador (power on)
  * 
- * @author otacilio
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
  * 
  */
 public class InitRouter {
@@ -111,7 +113,8 @@ public class InitRouter {
 		HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
 		ArrayList<Link> links = readLinksFile(routerID, routersConfig);
 
-		System.out.print("[" + new Timestamp(new Date().getTime()) + "] Starting router '" + routerID + "'.  ");
+		System.out.print("[" + new Timestamp(new Date().getTime())
+				+ "] Starting router '" + routerID + "'.  ");
 		new Router(routersConfig.get(routerID), links);
 	}
 
