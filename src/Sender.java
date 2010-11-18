@@ -18,30 +18,37 @@ public class Sender implements Runnable {
 
 	public void run() {
 		while (true) {
-			for (Link link : router.getLinks()) {
-				RouterConfiguration routerConfig = link.getRouterConnected();
-				InetSocketAddress destIp = new InetSocketAddress(
-						routerConfig.getAddress(),
-						Integer.parseInt(routerConfig.getPort()));
-				byte[] buffer = router.buildMessageToSend(link.getRouterConnected().getId())
-						.getBytes();
-				DatagramPacket sendDataPacket = null;
+			// Envia nova mensagem a cada 300 milisegundos.
+			try {
+				sendVector();
+				TimeUnit.MILLISECONDS.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 
-				try {
-					sendDataPacket = new DatagramPacket(buffer, buffer.length,
-							destIp);
-					router.getSocket().send(sendDataPacket);
-				} catch (Exception e) {
-					router.setLinkDown(link);
-				}
+		}
+	}
 
-				// Envia nova mensagem a cad 300 milisegundos.
-				try {
-					TimeUnit.MILLISECONDS.sleep(300);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
+	/**
+	 * Envia o vetor para todos os nós vizinhos
+	 */
+	public synchronized void sendVector() {
+		for (Link link : router.getLinks()) {
+			RouterConfiguration routerConfig = link.getRouterConnected();
+			InetSocketAddress destIp = new InetSocketAddress(
+					routerConfig.getAddress(), Integer.parseInt(routerConfig
+							.getPort()));
+			byte[] buffer = router.buildMessageToSend(
+					link.getRouterConnected().getId()).getBytes();
+			DatagramPacket sendDataPacket = null;
+
+			try {
+				sendDataPacket = new DatagramPacket(buffer, buffer.length,
+						destIp);
+				router.getSocket().send(sendDataPacket);
+			} catch (Exception e) {
+				router.setLinkDown(link);
 			}
 		}
 	}

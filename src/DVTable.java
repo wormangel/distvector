@@ -37,6 +37,7 @@ public class DVTable {
 						UNREACHABLE);
 			}
 		}
+		System.out.println("Init distance vector: " + selfDV.toString());
 	}
 
 	/**
@@ -72,18 +73,25 @@ public class DVTable {
 
 	/**
 	 * Metodo criado para tratar as mensagens de log.
-	 * @param log String de log
+	 * 
+	 * @param log
+	 *            String de log
 	 */
 	private void calculateDistances(String log) {
-		System.out.print(log + " ");
+		if (!log.isEmpty()) {
+			System.out.print("[" + new Timestamp(new Date().getTime()) + "] "
+					+ log + " ");
+		}
 		DistanceVector vectorBeforeChange = selfDV.clone();
-		
+
 		calculateDistances();
-		
+
 		if (!compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
 			System.out.println("Cost changed to: " + selfDV.toString());
+			// Notifica todos os roteadores vizinhos;
+			router.sendMessage();
 		} else {
-			//System.out.println("No change.");
+			// System.out.println("No change.");
 		}
 	}
 
@@ -139,8 +147,7 @@ public class DVTable {
 	 *            Id do roteador na outra ponta do enlace.
 	 */
 	public void linkDownUpdate(int id) {
-		String log = "[" + new Timestamp(new Date().getTime())
-				+ "] Link down: " + selfDV.getId() + "-" + id + ". ";
+		String log = "Link down: " + selfDV.getId() + "-" + id + ". ";
 		calculateDistances(log);
 	}
 
@@ -198,8 +205,7 @@ public class DVTable {
 		// Se não encontrar o ID do router no mapa de vetores então
 		// adiciona como novo e marca o enlace com UP
 		if (!vectorsRecieved.containsKey(vectorID)) {
-			String log = "[" + new Timestamp(new Date().getTime()) + "] Link "
-					+ selfDV.getId() + "-" + vectorID + " up!";
+			String log = "Link " + selfDV.getId() + "-" + vectorID + " up!";
 			vectorsRecieved.put(vectorID, dVetor);
 			calculateDistances(log);
 			router.getLink(dVetor.getId()).setRecovery(false);
@@ -217,9 +223,9 @@ public class DVTable {
 			return;
 		}
 
-//		String log = "[" + new Timestamp(new Date().getTime())
-//				+ "] Recieved vector: " + dVetor.toString() + " by router "
-//				+ vectorID;
+		// String log = "[" + new Timestamp(new Date().getTime())
+		// + "] Recieved vector: " + dVetor.toString() + " by router "
+		// + vectorID;
 		String log = "";
 		vectorsRecieved.put(vectorID, dVetor);
 		calculateDistances(log);
