@@ -6,7 +6,9 @@ import java.util.ArrayList;
  * Representa o roteador, cada processo levantado eh considerado um roteador
  * independente
  * 
- * @author otacilio
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
  * 
  */
 public class Router {

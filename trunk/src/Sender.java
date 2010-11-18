@@ -2,6 +2,18 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Responsável por enviar mensagens para os roteadores vizinhos. Isso pode
+ * ocorrer de dois modos, periodicamente por um tempo pre-definido ou quando
+ * quando o roteador precisa informar imediatamente os roteadores vizinhos
+ * devido a mudança no custo do vetor distância, nesse caso utiliza-se o método
+ * sendVector()
+ * 
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
+ * 
+ */
 public class Sender implements Runnable {
 
 	private Router router;

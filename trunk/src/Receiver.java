@@ -3,6 +3,15 @@ import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Responsável por ficar escutando os enlaces, receber as mensagens e repassar
+ * para o roteador
+ * 
+ * @author Lucas Medeiros
+ * @author Otacilio Lacerda
+ * @author Pedro Yossis
+ * 
+ */
 public class Receiver implements Runnable {
 
 	private Router router;
@@ -20,10 +29,10 @@ public class Receiver implements Runnable {
 		// Ex:
 		// "2|1,2|2,0|3,1"
 		String[] listInfo = msg.split("\\|");
-	
+
 		int routerID = Integer.parseInt(listInfo[0]);
 		DistanceVector vector = new DistanceVector(routerID);
-	
+
 		for (int i = 1; i < listInfo.length; i++) {
 			String[] entry = listInfo[i].split("-");
 			Integer id = Integer.parseInt(entry[0]);
@@ -32,7 +41,7 @@ public class Receiver implements Runnable {
 		}
 		router.setLinkUp(routerID);
 		router.updateDVTable(vector);
-	
+
 	}
 
 	/**
