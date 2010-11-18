@@ -1,3 +1,4 @@
+
 /**
  * Representa o enlace
  * 
@@ -10,12 +11,7 @@ public class Link {
 	private boolean linkUp;
 	private RouterConfiguration routerConnected;
 	private Integer linkCost;
-
-	// Essa variável serve como timeout, caso a contagem fique maior que o
-	// número de roteadores presentes, então ele considera que o enlace
-	// caiu. A cada timeout do socket ela é acrescentada a todos os
-	// enlaces vivos.
-	private Integer timeout;
+	private long lastActivity;
 
 	// Essa variável serve para indicar se o enalce se recupera de uma falha ou
 	// não. Ex: Se o enlace cai e depois volta essa variável é utilizada para
@@ -35,22 +31,23 @@ public class Link {
 		this.routerConnected = routerConnected;
 		this.linkCost = cost;
 		this.linkUp = false;
-		this.timeout = 0;
+		this.lastActivity = 0;
 		this.recovery = false;
 	}
 
 	/**
-	 * Incrementa a contagem de espera do enlace
+	 * Marca o tempo em que o enlace conseguiu ser utilizado a última vez.
+	 * @param Momento da última atividade que ocorreu no enlace
 	 */
-	public void addTimeout() {
-		timeout++;
+	public void setLastActivity(long last) {
+		this.lastActivity = last;
 	}
 
 	/**
-	 * Zera o timeout
+	 * Recupera quando o enlace foi utilizado a última vez
 	 */
-	public void clearTimeout() {
-		timeout = 0;
+	public long getLastActivity() {
+		return this.lastActivity;
 	}
 
 	/**
@@ -81,15 +78,6 @@ public class Link {
 	 */
 	public RouterConfiguration getRouterConnected() {
 		return routerConnected;
-	}
-
-	/**
-	 * Recupera a contagem para o timeout para considerar o enlace down.
-	 * 
-	 * @return Contagem do timeout
-	 */
-	public Integer getTimeout() {
-		return timeout;
 	}
 
 	/**

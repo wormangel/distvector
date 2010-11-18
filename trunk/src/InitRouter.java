@@ -3,7 +3,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -109,7 +111,7 @@ public class InitRouter {
 		HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
 		ArrayList<Link> links = readLinksFile(routerID, routersConfig);
 
-		System.out.println("Starting router " + routerID);
+		System.out.print("[" + new Timestamp(new Date().getTime()) + "] Starting router '" + routerID + "'.  ");
 		new Router(routersConfig.get(routerID), links);
 	}
 

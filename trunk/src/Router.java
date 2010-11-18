@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class Router {
 
+	private final long TIMEOUT = 1000; // Um segundo
 	private int id;
 	private String port;
 	private String address;
@@ -43,14 +44,6 @@ public class Router {
 
 		new Thread(sender).start();
 		new Thread(receiver).start();
-	}
-
-	public void addCounterToTimeout() {
-		for (Link link : links) {
-			if (link.isLinkUp()) {
-				link.addTimeout();
-			}
-		}
 	}
 
 	/**
@@ -90,12 +83,10 @@ public class Router {
 	 */
 	public void checkActiveLinks() {
 		for (Link link : links) {
-			// Escolhi a quantidade do número de nós, mas pode ser
-			// qualquer valor de timeout definido.
-			if (link.getTimeout() > 20) {
+			if (System.currentTimeMillis() - link.getLastActivity() > TIMEOUT) {
 				if (link.isLinkUp()) {
 					setLinkDown(link);
-					link.clearTimeout();
+					link.setLastActivity(System.currentTimeMillis());
 				}
 			}
 		}
@@ -189,6 +180,13 @@ public class Router {
 	}
 
 	/**
+	 * Envia o vetor distância para todos os nos vizinhos
+	 */
+	public void sendMessage() {
+		sender.sendVector();
+	}
+
+	/**
 	 * Marca o enlace como desativado
 	 * 
 	 * @param link
@@ -231,7 +229,7 @@ public class Router {
 		// dele
 		Link link = getLink(dv.getId());
 		if (link != null) {
-			link.clearTimeout();
+			link.setLastActivity(System.currentTimeMillis());
 		}
 		// Repassa para a tabela de vetores ser atualizada
 		dvTable.vectorRecievedUpdate(dv);

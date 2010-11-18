@@ -61,9 +61,6 @@ public class Receiver implements Runnable {
 			DatagramPacket receivePacket = new DatagramPacket(receiveData,
 					receiveData.length);
 
-			// Adiciona contagem do timeout (não esta sendo feito por tempo
-			// diretamente, ele conta um quantidade fixa de timeouts.
-			router.addCounterToTimeout();
 			try {
 				router.getSocket().receive(receivePacket);
 				String msg = new String(receivePacket.getData());
