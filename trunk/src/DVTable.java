@@ -87,8 +87,7 @@ public class DVTable {
 	 *            String de log
 	 */
 	private void calculateDistances(String log) {
-		System.out.print("[" + new Timestamp(new Date().getTime()) + "] " + log
-				+ " ");
+		if (log != null) System.out.print("[" + new Timestamp(new Date().getTime()) + "] " + log	+ " ");
 		DistanceVector vectorBeforeChange = selfDV.clone();
 
 		calculateDistances();
@@ -224,17 +223,18 @@ public class DVTable {
 		Link link = router.getLink(dVetor.getId());
 		if (link.getRecovery() && vectorsRecieved.containsKey(vectorID)) {
 			link.setRecovery(false);
-			String log = "Link " + selfDV.getId() + "-" + vectorID + " up!";
+			String log = "Link " + selfDV.getId() + "-" + vectorID + " re-up!";
 			vectorsRecieved.put(vectorID, dVetor);
 			calculateDistances(log);
 			return;
 		}
 
-		// String log = "[" + new Timestamp(new Date().getTime())
-		// + "] Recieved vector: " + dVetor.toString() + " by router "
-		// + vectorID;
+//		 String log = "[" + new Timestamp(new Date().getTime())
+//		 + "] Recieved vector: " + dVetor.toString() + " by router "
+//		 + vectorID;
 		vectorsRecieved.put(vectorID, dVetor);
-		calculateDistances();
+		calculateDistances(null);
+		//System.out.println(selfDV.toString());
 	}
 
 }
