@@ -197,6 +197,7 @@ public class Router {
 	public void setLinkDown(Link link) {
 		if (link.isLinkUp()) {
 			link.setLinkUp(false);
+			link.setRecovery(true);
 			dvTable.linkDownUpdate(link.getRouterConnected().getId());
 		}
 	}
@@ -212,8 +213,8 @@ public class Router {
 			if (link.getRouterConnected().getId() == id) {
 				// A linha abaixo serve para identificar que o enlace
 				// se recuperou de uma queda.
-				if (!link.isLinkUp())
-					link.setRecovery(true);
+//				if (!link.isLinkUp())
+//					link.setRecovery(true);
 				link.setLinkUp(true);
 
 			}
@@ -235,7 +236,7 @@ public class Router {
 		}
 		// Repassa para a tabela de vetores ser atualizada
 		dvTable.vectorRecievedUpdate(dv);
-
+		//TODO System.out.println(dvTable.getDistanceVector().toString());
 	}
 
 }
