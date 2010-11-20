@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class Sender implements Runnable {
 
 	private Router router;
-	private long sendTime; //tempo para reenviar o DV
+	private long sendTime; // tempo para reenviar o DV
 
 	/**
 	 * Envia mensagens periodicas aos roteadores vizinhos. Utiliza outra thread.
@@ -51,14 +51,13 @@ public class Sender implements Runnable {
 	 */
 	public synchronized void sendVector() {
 		String vector = router.buildMessageToSend();
-		
+
 		for (Link link : router.getLinks()) {
 			RouterConfiguration routerConfig = link.getRouterConnected();
 			InetSocketAddress destIp = new InetSocketAddress(
 					routerConfig.getAddress(), Integer.parseInt(routerConfig
 							.getPort()));
 
-			
 			byte[] buffer = vector.getBytes();
 			DatagramPacket sendDataPacket = null;
 

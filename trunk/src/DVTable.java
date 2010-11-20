@@ -36,7 +36,7 @@ public class DVTable {
 
 		// Coloca a distancia 0 para si proprio dentro do vetor
 		selfDV.putDistance(router.getRouterConfiguration().getId(), 0);
-
+		
 		for (Link link : links) {
 			if (link.isLinkUp()) {
 				selfDV.putDistance(link.getRouterConnected().getId(),
@@ -49,6 +49,8 @@ public class DVTable {
 		// TODO Log
 		if (router.getLogLevel() != LogLevel.ROUTER_TABLE) {
 			System.out.println("Init distance vector: " + selfDV.toString());
+		} else {
+			System.out.println("\n" + router.getRouterTable().toString());
 		}
 	}
 
@@ -67,6 +69,7 @@ public class DVTable {
 		Integer linkCost;
 		Integer currentCost;
 		Integer neighborCost;
+		HashMap<Integer, Integer> nextRouterMap = new HashMap<Integer, Integer>();
 
 		for (Integer vectorID : vectorsRecieved.keySet()) {
 			linkCost = router.getLink(vectorID).getCost();
@@ -78,7 +81,22 @@ public class DVTable {
 				// Verifica se o custo pelo vizinho é menor
 				if (currentCost > neighborCost) {
 					selfDV.putDistance(distanceTo, neighborCost);
+
+					// Se estiver no modo de log da tabela de roteamento, salva
+					// o próximo salto de cada destino.
+					if (router.getLogLevel() == LogLevel.ROUTER_TABLE && neighborCost != UNREACHABLE) {
+						nextRouterMap.put(distanceTo, vectorID);
+					}
 				}
+			}
+		}
+		// Se estiver no modo de log da tabela de roteamento, atualiza a tabela
+		// de roteamento
+		if (router.getLogLevel() == LogLevel.ROUTER_TABLE) {
+			for (Integer destination : nextRouterMap.keySet()) {
+				router.getRouterTable().addLine(destination,
+						nextRouterMap.get(destination),
+						selfDV.getDistances().get(destination));
 			}
 		}
 	}
@@ -102,7 +120,8 @@ public class DVTable {
 				|| router.getLogLevel() == LogLevel.LOG_FULL || router
 				.getLogLevel() == LogLevel.FULL_RECIEVE)) ? "["
 				+ new Timestamp(new Date().getTime()) + "] Recieved vector: "
-				+ dVector.toString() + " by router " + dVector.getId() + ". " : "";
+				+ dVector.toString() + " by router " + dVector.getId() + ". "
+				: "";
 
 		if (!compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
 			// TODO Log
@@ -112,11 +131,16 @@ public class DVTable {
 				System.out.println(recieved + "Cost changed to: "
 						+ selfDV.toString());
 			}
+			
+			if (router.getLogLevel() == LogLevel.ROUTER_TABLE) {
+				System.out.println("\n" + router.getRouterTable());
+			}
 			// Notifica todos os roteadores vizinhos;
 			router.sendMessage();
 		} else {
 			// TODO
-			if (router.getLogLevel() == LogLevel.LOG_FULL || router.getLogLevel() == LogLevel.FULL_RECIEVE) {
+			if (router.getLogLevel() == LogLevel.LOG_FULL
+					|| router.getLogLevel() == LogLevel.FULL_RECIEVE) {
 				System.out.println(recieved + "No change.");
 			}
 		}
