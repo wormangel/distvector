@@ -212,12 +212,7 @@ public class Router {
 	public void setLinkUp(Integer id) {
 		for (Link link : getLinks()) {
 			if (link.getRouterConnected().getId() == id) {
-				// A linha abaixo serve para identificar que o enlace
-				// se recuperou de uma queda.
-//				if (!link.isLinkUp())
-//					link.setRecovery(true);
 				link.setLinkUp(true);
-
 			}
 		}
 	}
@@ -237,7 +232,6 @@ public class Router {
 		}
 		// Repassa para a tabela de vetores ser atualizada
 		dvTable.vectorRecievedUpdate(dv);
-		//TODO System.out.println(dvTable.getDistanceVector().toString());
 	}
 	
 	public boolean isHightLogLevel() {
