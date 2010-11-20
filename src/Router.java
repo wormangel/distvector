@@ -22,7 +22,7 @@ public class Router {
 	private DVTable dvTable;
 	private Receiver receiver;
 	private Sender sender;
-	private String logLevel;
+	private LogLevel logLevel;
 
 	/**
 	 * Constroi o Roteador
@@ -32,7 +32,9 @@ public class Router {
 	 * @param links
 	 *            Lista com todos os enlaces do roteador
 	 */
-	public Router(RouterConfiguration routerConfiguration, ArrayList<Link> links, long sendTime, long timeout, String logLevel) {
+	public Router(RouterConfiguration routerConfiguration,
+			ArrayList<Link> links, long sendTime, long timeout,
+			LogLevel logLevel) {
 		this.id = routerConfiguration.getId();
 		this.port = routerConfiguration.getPort();
 		this.address = routerConfiguration.getAddress();
@@ -75,8 +77,6 @@ public class Router {
 					+ distanceVector.getDistances().get(router));
 		}
 		String menssage = messageBuilder.toString().trim();
-		// System.out.println("[" + new Timestamp(new Date().getTime())
-		// + "] Send: " + menssage + " to router " + dest);
 		return menssage;
 	}
 
@@ -165,6 +165,13 @@ public class Router {
 	}
 
 	/**
+	 * @return the logLevel
+	 */
+	public LogLevel getLogLevel() {
+		return logLevel;
+	}
+
+	/**
 	 * Configuração do Roteador
 	 * 
 	 * @return Configuracao do roteador
@@ -233,5 +240,5 @@ public class Router {
 		// Repassa para a tabela de vetores ser atualizada
 		dvTable.vectorRecievedUpdate(dv);
 	}
-	
+
 }

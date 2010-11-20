@@ -46,7 +46,10 @@ public class DVTable {
 						UNREACHABLE);
 			}
 		}
-		System.out.println("Init distance vector: " + selfDV.toString());
+		// TODO Log
+		if (router.getLogLevel() != LogLevel.ROUTER_TABLE) {
+			System.out.println("Init distance vector: " + selfDV.toString());
+		}
 	}
 
 	/**
@@ -86,18 +89,36 @@ public class DVTable {
 	 * @param log
 	 *            String de log
 	 */
-	private void calculateDistances(String log) {
-		if (log != null) System.out.print("[" + new Timestamp(new Date().getTime()) + "] " + log	+ " ");
+	private void calculateDistances(String log, DistanceVector dVector) {
+		// TODO
+		if (log != null)
+			System.out.println("[" + new Timestamp(new Date().getTime()) + "] "
+					+ log + " ");
 		DistanceVector vectorBeforeChange = selfDV.clone();
 
 		calculateDistances();
 
+		String recieved = (dVector != null && (router.getLogLevel() == LogLevel.UPDATE_ONLY
+				|| router.getLogLevel() == LogLevel.LOG_FULL || router
+				.getLogLevel() == LogLevel.FULL_RECIEVE)) ? "["
+				+ new Timestamp(new Date().getTime()) + "] Recieved vector: "
+				+ dVector.toString() + " by router " + dVector.getId() + ". " : "";
+
 		if (!compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
-			System.out.println("Cost changed to: " + selfDV.toString());
+			// TODO Log
+			if (router.getLogLevel() == LogLevel.UPDATE_ONLY
+					|| router.getLogLevel() == LogLevel.LOG_FULL
+					|| router.getLogLevel() == LogLevel.FULL_RECIEVE) {
+				System.out.println(recieved + "Cost changed to: "
+						+ selfDV.toString());
+			}
 			// Notifica todos os roteadores vizinhos;
 			router.sendMessage();
 		} else {
-			// System.out.println("No change.");
+			// TODO
+			if (router.getLogLevel() == LogLevel.LOG_FULL || router.getLogLevel() == LogLevel.FULL_RECIEVE) {
+				System.out.println(recieved + "No change.");
+			}
 		}
 	}
 
@@ -154,7 +175,7 @@ public class DVTable {
 	 */
 	public void linkDownUpdate(int id) {
 		String log = "Link down: " + selfDV.getId() + "-" + id + ". ";
-		calculateDistances(log);
+		calculateDistances(log, null);
 	}
 
 	/**
@@ -199,41 +220,41 @@ public class DVTable {
 	 * Atualiza o vetor distância atual apos o recebimento do vetor distância do
 	 * vizinho
 	 * 
-	 * @param dVetor
+	 * @param dVector
 	 *            Vetor do vizinho
 	 */
-	public void vectorRecievedUpdate(DistanceVector dVetor) {
-		Integer vectorID = dVetor.getId();
+	public void vectorRecievedUpdate(DistanceVector dVector) {
+		Integer vectorID = dVector.getId();
 
 		// Descobre novos roteadores
-		routerDiscovery(dVetor);
+		routerDiscovery(dVector);
 
 		// Se não encontrar o ID do router no mapa de vetores então
 		// adiciona como novo e marca o enlace com UP
 		if (!vectorsRecieved.containsKey(vectorID)) {
-			String log = "Link " + selfDV.getId() + "-" + vectorID + " up!";
-			vectorsRecieved.put(vectorID, dVetor);
-			calculateDistances(log);
-			router.getLink(dVetor.getId()).setRecovery(false);
+			String log = (router.getLogLevel() != LogLevel.ROUTER_TABLE) ? "Link "
+					+ selfDV.getId() + "-" + vectorID + " up!"
+					: null;
+			vectorsRecieved.put(vectorID, dVector);
+			calculateDistances(log, dVector);
+			router.getLink(dVector.getId()).setRecovery(false);
 			return;
 		}
 
 		// Apenas para indicar se o link se reconectou.
 		// Condição: Indicador de recuperação de queda && id já esta na tabela.
-		Link link = router.getLink(dVetor.getId());
+		Link link = router.getLink(dVector.getId());
 		if (link.getRecovery() && vectorsRecieved.containsKey(vectorID)) {
 			link.setRecovery(false);
-			String log = "Link " + selfDV.getId() + "-" + vectorID + " re-up!";
-			vectorsRecieved.put(vectorID, dVetor);
-			calculateDistances(log);
+			String log = (router.getLogLevel() != LogLevel.ROUTER_TABLE) ? "Link "
+					+ selfDV.getId() + "-" + vectorID + " re-up!"
+					: null;
+			vectorsRecieved.put(vectorID, dVector);
+			calculateDistances(log, dVector);
 			return;
 		}
-
-//		 String log = "[" + new Timestamp(new Date().getTime())
-//		 + "] Recieved vector: " + dVetor.toString() + " by router "
-//		 + vectorID;
-		vectorsRecieved.put(vectorID, dVetor);
-		calculateDistances(null);
+		vectorsRecieved.put(vectorID, dVector);
+		calculateDistances(null, dVector);
 	}
 
 }

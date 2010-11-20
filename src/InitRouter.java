@@ -28,12 +28,42 @@ public class InitRouter {
 	static final String ROUTERS_FILE = "roteador.config";
 	static final String LINKS_FILE = "enlaces.config";
 
+	static final HashMap<String, LogLevel> logs = new HashMap<String, LogLevel>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put("uo", LogLevel.UPDATE_ONLY);
+			put("fr", LogLevel.FULL_RECIEVE);
+			put("fs", LogLevel.FULL_SEND);
+			put("lf", LogLevel.LOG_FULL);
+			put("rt", LogLevel.ROUTER_TABLE);
+		}
+	};
+
 	static final int ID = 0;
 	static final int PORT = 1;
 	static final int ADDRESS = 2;
 	static final int ROUTER1 = 0;
 	static final int ROUTER2 = 1;
 	static final int COST = 2;
+
+	/**
+	 * Pega o argumento de linha de comando e adapta a logica do roteador.
+	 * 
+	 * @param argsValue
+	 *            Argumento passado pela linha de comando.
+	 * @return Nivel de log representado pelo Enum LogLevel
+	 */
+	private static LogLevel getLogLevel(String argsValue) {
+		if (argsValue.equals("uo"))
+			return LogLevel.UPDATE_ONLY;
+		if (argsValue.equals("fr"))
+			return LogLevel.FULL_RECIEVE;
+		if (argsValue.equals("fs"))
+			return LogLevel.FULL_SEND;
+		if (argsValue.equals("lf"))
+			return LogLevel.LOG_FULL;
+		return LogLevel.ROUTER_TABLE;
+	}
 
 	/**
 	 * Faz a leitura do arquivo de configuracao dos enlaces
@@ -118,7 +148,7 @@ public class InitRouter {
 		Integer routerID;
 		long timeout; // Tempo para identificar que um enlace caiu
 		long sendTime; // Tempo para enviar vetores (periódico)
-		String logLevel;
+		LogLevel logLevel;
 
 		try {
 			Options opt = new Options();
@@ -150,8 +180,9 @@ public class InitRouter {
 				throw new ParseException("Router id can't be null");
 			routerID = Integer.parseInt(cl.getOptionValue("id"));
 			timeout = Integer.parseInt(cl.getOptionValue("timeout", "1000"));
-			sendTime = Integer.parseInt(cl.getOptionValue("sendTime", "300"));
-			logLevel = cl.getOptionValue("loglevel", "uo");
+			sendTime = Integer.parseInt(cl.getOptionValue("sendtime", "300"));
+
+			logLevel = getLogLevel(cl.getOptionValue("loglevel", "uo"));
 
 			//
 			// Lê as configurações
@@ -168,7 +199,8 @@ public class InitRouter {
 				System.out.println("Incorrect router ID.");
 			}
 		} catch (ParseException e) {
-			System.out.println("Invalid option(s)\nTry 'java -jar router.jar --help' for more information.");
+			System.out
+					.println("Invalid option(s)\nTry 'java -jar router.jar --help' for more information.");
 			System.exit(1);
 		}
 	}
