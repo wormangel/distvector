@@ -23,6 +23,7 @@ public class Router {
 	private Receiver receiver;
 	private Sender sender;
 	private LogLevel logLevel;
+	private RouterTable routerTable;
 
 	/**
 	 * Constroi o Roteador
@@ -42,6 +43,7 @@ public class Router {
 		this.timeout = timeout;
 		this.logLevel = logLevel;
 
+		routerTable = new RouterTable();
 		dvTable = new DVTable(this);
 		createSocket();
 
@@ -178,6 +180,15 @@ public class Router {
 	 */
 	public RouterConfiguration getRouterConfiguration() {
 		return new RouterConfiguration(id, port, address);
+	}
+
+	/**
+	 * Retorna uma referência a Tabela de Roteamento
+	 * 
+	 * @return Tabela de roteamento
+	 */
+	public RouterTable getRouterTable() {
+		return this.routerTable;
 	}
 
 	/**
