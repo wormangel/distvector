@@ -174,7 +174,7 @@ public class DVTable {
 			}
 			for (Integer k : vectorsRecieved.keySet()) {
 				if (!vectorsRecieved.get(k).getDistances().containsKey(key)) {
-					selfDV.putDistance(key, UNREACHABLE);
+					vectorsRecieved.get(k).putDistance(key, UNREACHABLE);
 				}
 			}
 		}
@@ -234,7 +234,6 @@ public class DVTable {
 //		 + vectorID;
 		vectorsRecieved.put(vectorID, dVetor);
 		calculateDistances(null);
-		//System.out.println(selfDV.toString());
 	}
 
 }
