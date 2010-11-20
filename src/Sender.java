@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class Sender implements Runnable {
 
 	private Router router;
-	private long sendDVTimeout; //tempo para reenviar o DV
+	private long sendTime; //tempo para reenviar o DV
 
 	/**
 	 * Envia mensagens periodicas aos roteadores vizinhos. Utiliza outra thread.
@@ -27,7 +27,7 @@ public class Sender implements Runnable {
 	 */
 	public Sender(Router router, long sendDVTimeout) {
 		this.router = router;
-		this.sendDVTimeout = sendDVTimeout;
+		this.sendTime = sendDVTimeout;
 	}
 
 	public void run() {
@@ -35,7 +35,7 @@ public class Sender implements Runnable {
 			// Envia nova mensagem a cada sendDVTimeout milisegundos.
 			try {
 				sendVector();
-				TimeUnit.MILLISECONDS.sleep(this.sendDVTimeout);
+				TimeUnit.MILLISECONDS.sleep(this.sendTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -64,8 +64,6 @@ public class Sender implements Runnable {
 				sendDataPacket = new DatagramPacket(buffer, buffer.length,
 						destIp);
 				router.getSocket().send(sendDataPacket);
-				if (router.isHightLogLevel() && link.isLinkUp())
-					System.out.println("Sent vector " + vetor + " to neighbor " + link.getRouterConnected().getId());
 			} catch (Exception e) {
 				router.setLinkDown(link);
 			}

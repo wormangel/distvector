@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class Router {
 
-	private long linkDropTimeout; // Tempo para reconhecer que um roteador caiu
-	private int id;
+	private long timeout; // Tempo para reconhecer que um roteador caiu
+	private Integer id;
 	private String port;
 	private String address;
 	private DatagramSocket communicationSocket;
@@ -22,7 +22,7 @@ public class Router {
 	private DVTable dvTable;
 	private Receiver receiver;
 	private Sender sender;
-	private boolean isHightLogLevel;
+	private String logLevel;
 
 	/**
 	 * Constroi o Roteador
@@ -32,20 +32,20 @@ public class Router {
 	 * @param links
 	 *            Lista com todos os enlaces do roteador
 	 */
-	public Router(RouterConfiguration routerConfiguration, ArrayList<Link> links, long sendDVTimeout, long linkDropTimeout, boolean isHightLogLevel) {
+	public Router(RouterConfiguration routerConfiguration, ArrayList<Link> links, long sendTime, long timeout, String logLevel) {
 		this.id = routerConfiguration.getId();
 		this.port = routerConfiguration.getPort();
 		this.address = routerConfiguration.getAddress();
 		this.links = links;
-		this.linkDropTimeout = linkDropTimeout;
-		this.isHightLogLevel = isHightLogLevel;
+		this.timeout = timeout;
+		this.logLevel = logLevel;
 
 		dvTable = new DVTable(this);
 		createSocket();
 
 		// Resposaveis por enviar e receber as mensagens
 		receiver = new Receiver(this);
-		sender = new Sender(this, sendDVTimeout);
+		sender = new Sender(this, sendTime);
 
 		new Thread(sender).start();
 		new Thread(receiver).start();
@@ -86,7 +86,7 @@ public class Router {
 	 */
 	public void checkActiveLinks() {
 		for (Link link : links) {
-			if (System.currentTimeMillis() - link.getLastActivity() > this.linkDropTimeout) {
+			if (System.currentTimeMillis() - link.getLastActivity() > this.timeout) {
 				if (link.isLinkUp()) {
 					setLinkDown(link);
 					link.setLastActivity(System.currentTimeMillis());
@@ -234,8 +234,4 @@ public class Router {
 		dvTable.vectorRecievedUpdate(dv);
 	}
 	
-	public boolean isHightLogLevel() {
-		return isHightLogLevel;
-	}
-
 }
