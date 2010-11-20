@@ -8,6 +8,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 /**
  * Inicializa o roteador (power on)
  * 
@@ -108,40 +115,61 @@ public class InitRouter {
 	 *            Id do roteador
 	 */
 	public static void main(String[] args) {
-		int routerID;
-		long sendDVTimeout;
-		long linkDropTimeout;
+		Integer routerID;
+		long timeout; // Tempo para identificar que um enlace caiu
+		long sendTime; // Tempo para enviar vetores (periódico)
 		String logLevel;
-		
+
 		try {
-			routerID = Integer.parseInt(args[0]);
-			sendDVTimeout = Long.parseLong(args[1]);
-			linkDropTimeout = Long.parseLong(args[2]);
-		} catch (Exception e) {
-			System.out.println("Incorrect parameters.");
-			return;
-		}
-		try {
-			logLevel = args[3];
-			if (logLevel != "hl") {
-				System.out.println("Incorrect parameters.");
-				return;
+			Options opt = new Options();
+			opt.addOption(new Option("h", "help", false, "Help"));
+			opt.addOption(new Option("i", "id", true, "Router id. (REQUIRED)"));
+			opt.addOption(new Option("t", "timeout", true,
+					"Timeout to detect link down (in milliseconds). Default = 1000ms"));
+			opt.addOption(new Option("s", "sendtime", true,
+					"Time to sent new vector (periodic time). Default = 300ms"));
+
+			String logMessage = "Choose router log level. Possible values:"
+					+ "\n(uo) Update only: logs only when the vector changes."
+					+ "\n(fr) Full recieve: logs everything that gets."
+					+ "\n(fs) Full send: logs everything that sent."
+					+ "\n(lf) Log full: logs everything."
+					+ "\n(rt) Router table: logs only router table."
+					+ "\nDefault = uo (Update only.)";
+			opt.addOption(new Option("l", "loglevel", true, logMessage));
+
+			BasicParser parser = new BasicParser();
+			CommandLine cl = parser.parse(opt, args);
+
+			if (cl.hasOption('h')) {
+				HelpFormatter f = new HelpFormatter();
+				f.printHelp("java -jar router.jar", opt, true);
+				System.exit(1);
 			}
-		} catch (Exception e) {
-			logLevel = "ll";
-		}
-		
-		boolean isHightLogLevel = (logLevel.equals("hl"));
+			if (cl.getOptionValue("id") == null)
+				throw new ParseException("Router id can't be null");
+			routerID = Integer.parseInt(cl.getOptionValue("id"));
+			timeout = Integer.parseInt(cl.getOptionValue("timeout", "1000"));
+			sendTime = Integer.parseInt(cl.getOptionValue("sendTime", "300"));
+			logLevel = cl.getOptionValue("loglevel", "uo");
 
-		HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
-		ArrayList<Link> links = readLinksFile(routerID, routersConfig);
+			//
+			// Lê as configurações
+			//
+			HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
+			ArrayList<Link> links = readLinksFile(routerID, routersConfig);
 
-		System.out.print("[" + new Timestamp(new Date().getTime())
-				+ "] Starting router '" + routerID + "'.  ");
-		try {
-			new Router(routersConfig.get(routerID), links, sendDVTimeout, linkDropTimeout, isHightLogLevel);
-		} catch (Exception e) {
-			System.out.println("Incorrect router ID.");
+			System.out.print("[" + new Timestamp(new Date().getTime())
+					+ "] Starting router '" + routerID + "'.  ");
+			try {
+				new Router(routersConfig.get(routerID), links, sendTime,
+						timeout, logLevel);
+			} catch (Exception e) {
+				System.out.println("Incorrect router ID.");
+			}
+		} catch (ParseException e) {
+			System.out.println("Invalid option(s)\nTry 'java -jar router.jar --help' for more information.");
+			System.exit(1);
 		}
 	}
 
