@@ -1,5 +1,7 @@
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,7 +50,7 @@ public class Sender implements Runnable {
 	 * Envia o vetor para todos os nós vizinhos
 	 */
 	public synchronized void sendVector() {
-		String vetor = router.buildMessageToSend();
+		String vector = router.buildMessageToSend();
 		
 		for (Link link : router.getLinks()) {
 			RouterConfiguration routerConfig = link.getRouterConnected();
@@ -57,7 +59,7 @@ public class Sender implements Runnable {
 							.getPort()));
 
 			
-			byte[] buffer = vetor.getBytes();
+			byte[] buffer = vector.getBytes();
 			DatagramPacket sendDataPacket = null;
 
 			try {
@@ -67,6 +69,12 @@ public class Sender implements Runnable {
 			} catch (Exception e) {
 				router.setLinkDown(link);
 			}
+		}
+		// TODO Log
+		if (router.getLogLevel() == LogLevel.FULL_SEND
+				|| router.getLogLevel() == LogLevel.LOG_FULL) {
+			System.out.println("[" + new Timestamp(new Date().getTime())
+					+ "] Send: " + vector + " to all neighbors.");
 		}
 	}
 
