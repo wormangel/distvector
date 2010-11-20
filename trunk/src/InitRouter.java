@@ -108,14 +108,41 @@ public class InitRouter {
 	 *            Id do roteador
 	 */
 	public static void main(String[] args) {
-		int routerID = Integer.parseInt(args[0]);
+		int routerID;
+		long sendDVTimeout;
+		long linkDropTimeout;
+		String logLevel;
+		
+		try {
+			routerID = Integer.parseInt(args[0]);
+			sendDVTimeout = Long.parseLong(args[1]);
+			linkDropTimeout = Long.parseLong(args[2]);
+		} catch (Exception e) {
+			System.out.println("Incorrect parameters.");
+			return;
+		}
+		try {
+			logLevel = args[3];
+			if (logLevel != "hl") {
+				System.out.println("Incorrect parameters.");
+				return;
+			}
+		} catch (Exception e) {
+			logLevel = "ll";
+		}
+		
+		boolean isHightLogLevel = (logLevel.equals("hl"));
 
 		HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
 		ArrayList<Link> links = readLinksFile(routerID, routersConfig);
 
 		System.out.print("[" + new Timestamp(new Date().getTime())
 				+ "] Starting router '" + routerID + "'.  ");
-		new Router(routersConfig.get(routerID), links);
+		try {
+			new Router(routersConfig.get(routerID), links, sendDVTimeout, linkDropTimeout, isHightLogLevel);
+		} catch (Exception e) {
+			System.out.println("Incorrect router ID.");
+		}
 	}
 
 }

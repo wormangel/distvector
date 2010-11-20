@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Router {
 
-	private final long TIMEOUT = 1000; // Um segundo
+	private long linkDropTimeout; // Tempo para reconhecer que um roteador caiu
 	private int id;
 	private String port;
 	private String address;
@@ -22,6 +22,7 @@ public class Router {
 	private DVTable dvTable;
 	private Receiver receiver;
 	private Sender sender;
+	private boolean isHightLogLevel;
 
 	/**
 	 * Constroi o Roteador
@@ -31,18 +32,20 @@ public class Router {
 	 * @param links
 	 *            Lista com todos os enlaces do roteador
 	 */
-	public Router(RouterConfiguration routerConfiguration, ArrayList<Link> links) {
+	public Router(RouterConfiguration routerConfiguration, ArrayList<Link> links, long sendDVTimeout, long linkDropTimeout, boolean isHightLogLevel) {
 		this.id = routerConfiguration.getId();
 		this.port = routerConfiguration.getPort();
 		this.address = routerConfiguration.getAddress();
 		this.links = links;
+		this.linkDropTimeout = linkDropTimeout;
+		this.isHightLogLevel = isHightLogLevel;
 
 		dvTable = new DVTable(this);
 		createSocket();
 
 		// Resposaveis por enviar e receber as mensagens
 		receiver = new Receiver(this);
-		sender = new Sender(this);
+		sender = new Sender(this, sendDVTimeout);
 
 		new Thread(sender).start();
 		new Thread(receiver).start();
@@ -57,12 +60,10 @@ public class Router {
 	 * vizinho ativos (1, 2 e 3), tendo a comunicação com cada um custo
 	 * respectivo 2, 0 e 1
 	 * 
-	 * @param dest
-	 *            Router para o qual a mensagem será enviada
 	 * @return String com mensagem formatada de acordo com o protocolo
 	 *         estabelecido
 	 */
-	public String buildMessageToSend(Integer dest) {
+	public String buildMessageToSend() {
 		StringBuilder messageBuilder = new StringBuilder();
 		DistanceVector distanceVector = dvTable.getDistanceVector();
 
@@ -85,7 +86,7 @@ public class Router {
 	 */
 	public void checkActiveLinks() {
 		for (Link link : links) {
-			if (System.currentTimeMillis() - link.getLastActivity() > TIMEOUT) {
+			if (System.currentTimeMillis() - link.getLastActivity() > this.linkDropTimeout) {
 				if (link.isLinkUp()) {
 					setLinkDown(link);
 					link.setLastActivity(System.currentTimeMillis());
@@ -237,6 +238,10 @@ public class Router {
 		// Repassa para a tabela de vetores ser atualizada
 		dvTable.vectorRecievedUpdate(dv);
 		//TODO System.out.println(dvTable.getDistanceVector().toString());
+	}
+	
+	public boolean isHightLogLevel() {
+		return isHightLogLevel;
 	}
 
 }
