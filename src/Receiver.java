@@ -39,6 +39,10 @@ public class Receiver implements Runnable {
 			Integer cost = Integer.parseInt(entry[1]);
 			vector.putDistance(id, cost);
 		}
+		
+		if (router.isHightLogLevel())
+			System.out.println("Received vector " + msg + " from neighbor router " + routerID);
+		
 		router.setLinkUp(routerID);
 		router.updateDVTable(vector);
 
