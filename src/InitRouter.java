@@ -179,8 +179,8 @@ public class InitRouter {
 			if (cl.getOptionValue("id") == null)
 				throw new ParseException("Router id can't be null");
 			routerID = Integer.parseInt(cl.getOptionValue("id"));
-			timeout = Integer.parseInt(cl.getOptionValue("timeout", "1000"));
-			sendTime = Integer.parseInt(cl.getOptionValue("sendtime", "300"));
+			timeout = Integer.parseInt(cl.getOptionValue("timeout", "5000"));
+			sendTime = Integer.parseInt(cl.getOptionValue("sendtime", "1000"));
 
 			logLevel = getLogLevel(cl.getOptionValue("loglevel", "uo"));
 
