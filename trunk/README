@@ -1,0 +1,8 @@
+Projeto de Redes 2010.2
+Equipe:
+	Lucas Medeiros
+	Otacilio Lacerda
+	Pedro Yossis
+
+Para executar o roteador, é necessário passar os argumentos necessários para sua
+inicialização. Para ver os argumentos necessários passa o argumento "--help"

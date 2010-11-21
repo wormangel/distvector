@@ -93,6 +93,7 @@ public class DVTable {
 		// Se estiver no modo de log da tabela de roteamento, atualiza a tabela
 		// de roteamento
 		if (router.getLogLevel() == LogLevel.ROUTER_TABLE) {
+			router.getRouterTable().clearRouterTable();
 			for (Integer destination : nextRouterMap.keySet()) {
 				router.getRouterTable().addLine(destination,
 						nextRouterMap.get(destination),
