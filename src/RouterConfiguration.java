@@ -1,5 +1,5 @@
 /**
- * Representacao das configuracoes do roteador que serao lidas do arquivo.
+ * Representação das configurações do roteador que serao lidas do arquivo.
  * 
  * @author Lucas Medeiros
  * @author Otacilio Lacerda
@@ -12,14 +12,14 @@ public class RouterConfiguration {
 	String address;
 
 	/**
-	 * Cria nova configuracao
+	 * Cria nova configuração
 	 * 
 	 * @param id
 	 *            Identificador
 	 * @param port
 	 *            Porta de escuta
 	 * @param address
-	 *            Endereco
+	 *            Endereço
 	 */
 	public RouterConfiguration(int id, String port, String address) {
 		this.id = id;
@@ -27,14 +27,29 @@ public class RouterConfiguration {
 		this.address = address;
 	}
 
+	/**
+	 * Id do roteador
+	 * 
+	 * @return id
+	 */
 	public Integer getId() {
 		return this.id;
 	}
 
+	/**
+	 * Porta que o roteador escuta
+	 * 
+	 * @return port
+	 */
 	public String getPort() {
 		return this.port;
 	}
 
+	/**
+	 * Endereço que o roteador escuta
+	 * 
+	 * @return address
+	 */
 	public String getAddress() {
 		return this.address;
 	}

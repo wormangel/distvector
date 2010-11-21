@@ -2,7 +2,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 
 /**
- * Tabela de roteamento. Guarda o custo e prÛximo salto para todos destinos.
+ * Tabela de roteamento. Guarda o custo e pr√≥ximo salto para todos destinos.
  * 
  * @author Lucas Medeiros
  * @author Otacilio Lacerda
@@ -12,30 +12,43 @@ import java.util.HashMap;
 public class RouterTable {
 
 	/**
-	 * Casse interna para ajudar na representaÁ„o da linha da tabela de
-	 * roteamento. Contem o ID do roteador que ser· o prÛximo salto e o custo
+	 * Casse interna para ajudar na representa√ß√£o da linha da tabela de
+	 * roteamento. Contem o ID do roteador que ser√° o pr√≥ximo salto e o custo
 	 * total ate o destino.
 	 */
-	public class Linha {
+	public class TableLine {
 		public Integer nextRouter;
 		public Integer cost;
 
-		public Linha(Integer next, Integer cost) {
+		public TableLine(Integer next, Integer cost) {
 			this.nextRouter = next;
 			this.cost = cost;
 		}
 	}
 
-	private HashMap<Integer, Linha> routerTable;
+	private HashMap<Integer, TableLine> routerTable;
 
 	public RouterTable() {
-		this.routerTable = new HashMap<Integer, Linha>();
+		this.routerTable = new HashMap<Integer, TableLine>();
 	}
 
+	/**
+	 * Adiciona uma linha a tabela de roteamento
+	 * 
+	 * @param destination
+	 *            Destino
+	 * @param nextRouter
+	 *            Roteador do pr√≥ximo salto ate o destino
+	 * @param cost
+	 *            Custo total para o destino
+	 */
 	public void addLine(Integer destination, Integer nextRouter, Integer cost) {
-		routerTable.put(destination, new Linha(nextRouter, cost));
+		routerTable.put(destination, new TableLine(nextRouter, cost));
 	}
 
+	/**
+	 * Limpa a tabela de roteamento
+	 */
 	public void clearRouterTable() {
 		routerTable.clear();
 	}
@@ -51,7 +64,7 @@ public class RouterTable {
 			result.append("            EMPTY\n");
 		} else {
 			for (Integer destination : routerTable.keySet()) {
-				Linha line = routerTable.get(destination);
+				TableLine line = routerTable.get(destination);
 				result.append("|  "
 						+ new DecimalFormat("0000").format(destination) + "  ");
 				result.append("|  "

@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Tabela que armazena o vetor dist‚ncia atual e os vetores dist‚ncia dos
+ * Tabela que armazena o vetor dist√¢ncia atual e os vetores dist√¢ncia dos
  * roteadores vizinhos
  * 
  * @author Lucas Medeiros
@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class DVTable {
 
-	static final Integer UNREACHABLE = 9999; // Di‚metro da rede.
+	static final Integer UNREACHABLE = 9999; // Di√¢metro da rede.
 	private DistanceVector selfDV;
 	private HashMap<Integer, DistanceVector> vectorsRecieved;
 	private Router router;
@@ -36,7 +36,7 @@ public class DVTable {
 
 		// Coloca a distancia 0 para si proprio dentro do vetor
 		selfDV.putDistance(router.getRouterConfiguration().getId(), 0);
-		
+
 		for (Link link : links) {
 			if (link.isLinkUp()) {
 				selfDV.putDistance(link.getRouterConnected().getId(),
@@ -55,13 +55,13 @@ public class DVTable {
 	}
 
 	/**
-	 * Atualiza o valor do vetor dist‚ncia atual quando o custo ate algum
+	 * Atualiza o valor do vetor dist√¢ncia atual quando o custo ate algum
 	 * caminho muda.
 	 * 
 	 * @param dv
-	 *            Id do vetor dist‚ncia
+	 *            Id do vetor dist√¢ncia
 	 * @param isDown
-	 *            Indica se a atualizaÁ„o acontece a partir da queda do link
+	 *            Indica se a atualiza√ß√£o acontece a partir da queda do link
 	 */
 	private void calculateDistances() {
 		resetSelfDV();
@@ -78,13 +78,14 @@ public class DVTable {
 				neighborCost = linkCost
 						+ vectorsRecieved.get(vectorID).getDistances()
 								.get(distanceTo);
-				// Verifica se o custo pelo vizinho È menor
+				// Verifica se o custo pelo vizinho √© menor
 				if (currentCost > neighborCost) {
 					selfDV.putDistance(distanceTo, neighborCost);
 
 					// Se estiver no modo de log da tabela de roteamento, salva
-					// o prÛximo salto de cada destino.
-					if (router.getLogLevel() == LogLevel.ROUTER_TABLE && neighborCost != UNREACHABLE) {
+					// o pr√≥ximo salto de cada destino.
+					if (router.getLogLevel() == LogLevel.ROUTER_TABLE
+							&& neighborCost != UNREACHABLE) {
 						nextRouterMap.put(distanceTo, vectorID);
 					}
 				}
@@ -132,7 +133,7 @@ public class DVTable {
 				System.out.println(recieved + "Cost changed to: "
 						+ selfDV.toString());
 			}
-			
+
 			if (router.getLogLevel() == LogLevel.ROUTER_TABLE) {
 				System.out.println("\n" + router.getRouterTable());
 			}
@@ -148,16 +149,16 @@ public class DVTable {
 	}
 
 	/**
-	 * Compara se dois vetores dist‚ncia s„o iguais. Esse mÈtodo auxiliar ajuda
-	 * para identificar (atualizaÁıes) mudanÁas no vetor dist‚ncia recebido do
+	 * Compara se dois vetores dist√¢ncia s√£o iguais. Esse m√©todo auxiliar ajuda
+	 * para identificar (atualiza√ß√µes) mudanÔøΩas no vetor dist√¢ncia recebido do
 	 * vizinho.
 	 * 
 	 * @param atual
-	 *            Vetor dist‚ncia atual.
+	 *            Vetor dist√¢ncia atual.
 	 * @param novo
-	 *            Novo vetor dist‚ncia recebido
-	 * @return True se forem iguais, False se tiverem qualquer atualizaÁ„o
-	 *         (diferenÁa).
+	 *            Novo vetor dist√¢ncia recebido
+	 * @return True se forem iguais, False se tiverem qualquer atualiza√ß√£o
+	 *         (diferen√ßa).
 	 */
 	private boolean compareVectorsAreEquals(DistanceVector atual,
 			DistanceVector novo) {
@@ -165,7 +166,7 @@ public class DVTable {
 			HashMap<Integer, Integer> vAtual = atual.getDistances();
 			HashMap<Integer, Integer> vNovo = novo.getDistances();
 
-			// compara nas duas direÁıes pois um vetor pode ter mais chaves do
+			// compara nas duas dire√ß√µes pois um vetor pode ter mais chaves do
 			// que outro.
 			for (Integer key : vAtual.keySet()) {
 				if (!vAtual.get(key).equals(vNovo.get(key))) {
@@ -184,9 +185,9 @@ public class DVTable {
 	}
 
 	/**
-	 * Recupera vetor dist‚ncia do roteador
+	 * Recupera vetor dist√¢ncia do roteador
 	 * 
-	 * @return Vetor Dist‚ncia
+	 * @return Vetor Dist√¢ncia
 	 */
 	public DistanceVector getDistanceVector() {
 		return selfDV;
@@ -204,15 +205,15 @@ public class DVTable {
 	}
 
 	/**
-	 * Troca informaÁıes sobre novos roteadores com o vetor dist‚ncia do vetor
-	 * recebido e atualiza todos os vetores-dist‚ncia da tabela de vetores.
+	 * Troca informa√ß√µes sobre novos roteadores com o vetor dist√¢ncia do vetor
+	 * recebido e atualiza todos os vetores-dist√¢ncia da tabela de vetores.
 	 * 
 	 * @param dVector
-	 *            Vetor dist‚ncia recebido
+	 *            Vetor dist√¢ncia recebido
 	 */
 	private void routerDiscovery(DistanceVector dVector) {
 		// Se o vetor recebido tiver algum router novo, desconhecido
-		// por este, no seu vetor dist‚ncia, ent„o ele adiciona essa chave
+		// por este, no seu vetor dist√¢ncia, ent√£o ele adiciona essa chave
 		// no vetor deste.
 		for (Integer key : dVector.getDistances().keySet()) {
 			if (!selfDV.getDistances().containsKey(key)) {
@@ -232,7 +233,7 @@ public class DVTable {
 	}
 
 	/**
-	 * Reinicia o prÛprio vetor para recalcular os custos
+	 * Reinicia o pr√≥prio vetor para recalcular os custos
 	 */
 	private void resetSelfDV() {
 		for (Integer key : selfDV.getDistances().keySet()) {
@@ -242,7 +243,7 @@ public class DVTable {
 	}
 
 	/**
-	 * Atualiza o vetor dist‚ncia atual apos o recebimento do vetor dist‚ncia do
+	 * Atualiza o vetor dist√¢ncia atual apos o recebimento do vetor dist√¢ncia do
 	 * vizinho
 	 * 
 	 * @param dVector
@@ -254,7 +255,7 @@ public class DVTable {
 		// Descobre novos roteadores
 		routerDiscovery(dVector);
 
-		// Se n„o encontrar o ID do router no mapa de vetores ent„o
+		// Se n√£o encontrar o ID do router no mapa de vetores ent√£o
 		// adiciona como novo e marca o enlace com UP
 		if (!vectorsRecieved.containsKey(vectorID)) {
 			String log = (router.getLogLevel() != LogLevel.ROUTER_TABLE) ? "Link "
@@ -267,7 +268,7 @@ public class DVTable {
 		}
 
 		// Apenas para indicar se o link se reconectou.
-		// CondiÁ„o: Indicador de recuperaÁ„o de queda && id j· esta na tabela.
+		// Condi√ß√£o: Indicador de recupera√ß√£o de queda && id j√° esta na tabela.
 		Link link = router.getLink(dVector.getId());
 		if (link.getRecovery() && vectorsRecieved.containsKey(vectorID)) {
 			link.setRecovery(false);

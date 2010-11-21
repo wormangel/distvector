@@ -66,7 +66,7 @@ public class InitRouter {
 	}
 
 	/**
-	 * Faz a leitura do arquivo de configuracao dos enlaces
+	 * Faz a leitura do arquivo de configuraÃ§Ã£o dos enlaces
 	 * 
 	 * @param routerID
 	 *            ID do roteador que vai verificar os enlaces
@@ -147,7 +147,7 @@ public class InitRouter {
 	public static void main(String[] args) {
 		Integer routerID;
 		long timeout; // Tempo para identificar que um enlace caiu
-		long sendTime; // Tempo para enviar vetores (periódico)
+		long sendTime; // Tempo para enviar vetores (periÃ³dico)
 		LogLevel logLevel;
 
 		try {
@@ -155,9 +155,9 @@ public class InitRouter {
 			opt.addOption(new Option("h", "help", false, "Help"));
 			opt.addOption(new Option("i", "id", true, "Router id. (REQUIRED)"));
 			opt.addOption(new Option("t", "timeout", true,
-					"Timeout to detect link down (in milliseconds). Default = 1000ms"));
+					"Timeout to detect link down (in milliseconds). Default = 5000ms"));
 			opt.addOption(new Option("s", "sendtime", true,
-					"Time to sent new vector (periodic time). Default = 300ms"));
+					"Time to sent new vector (periodic time). Default = 1000ms"));
 
 			String logMessage = "Choose router log level. Possible values:"
 					+ "\n(uo) Update only: logs only when the vector changes."
@@ -185,7 +185,7 @@ public class InitRouter {
 			logLevel = getLogLevel(cl.getOptionValue("loglevel", "uo"));
 
 			//
-			// Lê as configurações
+			// LÃª as configuraÃ§Ãµes
 			//
 			HashMap<Integer, RouterConfiguration> routersConfig = readRoutersFile(routerID);
 			ArrayList<Link> links = readLinksFile(routerID, routersConfig);

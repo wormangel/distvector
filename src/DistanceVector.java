@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 /**
- * Representa um vetor dist‚ncia
+ * Representa um vetor dist√¢ncia
  * 
  * @author Lucas Medeiros
  * @author Otacilio Lacerda
