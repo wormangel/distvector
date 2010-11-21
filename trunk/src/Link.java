@@ -14,10 +14,10 @@ public class Link {
 	private Integer linkCost;
 	private long lastActivity;
 
-	// Essa variável serve para indicar se o enalce se recupera de uma falha ou
-	// não. Ex: Se o enlace cai e depois volta essa variável é utilizada para
+	// Essa variÃ¡vel serve para indicar se o enalce se recupera de uma falha ou
+	// nÃ£o. Ex: Se o enlace cai e depois volta essa variÃ¡vel Ã© utilizada para
 	// indicar isso. Serve apenas para facilitar o debug, indicando na saida
-	// se ele foi religado ou não.
+	// se ele foi religado ou nÃ£o.
 	private boolean recovery;
 
 	/**
@@ -37,17 +37,17 @@ public class Link {
 	}
 
 	/**
-	 * Marca o tempo em que o enlace conseguiu ser utilizado a última vez.
+	 * Marca o tempo em que o enlace conseguiu ser utilizado a Ãºltima vez.
 	 * 
 	 * @param Momento
-	 *            da última atividade que ocorreu no enlace
+	 *            da Ãºltima atividade que ocorreu no enlace
 	 */
 	public void setLastActivity(long last) {
 		this.lastActivity = last;
 	}
 
 	/**
-	 * Recupera quando o enlace foi utilizado a última vez
+	 * Recupera quando o enlace foi utilizado a Ãºltima vez
 	 */
 	public long getLastActivity() {
 		return this.lastActivity;
@@ -68,7 +68,7 @@ public class Link {
 	}
 
 	/**
-	 * Retorna se o enlace se recuperou de uma queda ou não.
+	 * Retorna se o enlace se recuperou de uma queda ou nÃ£o.
 	 * 
 	 * @return
 	 */
@@ -92,7 +92,7 @@ public class Link {
 	}
 
 	/**
-	 * Marca o enlace para recuperação de queda ou recuperação da mesma
+	 * Marca o enlace para recuperaÃ§Ã£o de queda ou recuperaÃ§Ã£o da mesma
 	 * 
 	 * @param bool
 	 *            Estado do enlace

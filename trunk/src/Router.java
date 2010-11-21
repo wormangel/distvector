@@ -29,7 +29,7 @@ public class Router {
 	 * Constroi o Roteador
 	 * 
 	 * @param routerConfiguration
-	 *            Configuracao do roteador
+	 *            Configura√ß√£o do roteador
 	 * @param links
 	 *            Lista com todos os enlaces do roteador
 	 */
@@ -57,11 +57,11 @@ public class Router {
 
 	/**
 	 * Formata a mensagem de acordo com o protocolo estabelecido para enviar seu
-	 * vetor dist‚ncia para os roteadores vizinhos.
+	 * vetor dist√¢ncia para os roteadores vizinhos.
 	 * 
 	 * Formato da mensagem: ID ROUTER | ID , Custo | ID , Custo | ... Ex:
 	 * "2|1,2|2,0|3,1" Considerando que o roteador tem o ID 2 e que tem tres
-	 * vizinho ativos (1, 2 e 3), tendo a comunicaÁ„o com cada um custo
+	 * vizinho ativos (1, 2 e 3), tendo a comunica√ß√£o com cada um custo
 	 * respectivo 2, 0 e 1
 	 * 
 	 * @return String com mensagem formatada de acordo com o protocolo
@@ -98,7 +98,7 @@ public class Router {
 	}
 
 	/**
-	 * Socket usado para comunicaÁ„o com os vizinhos
+	 * Socket usado para comunica√ß√£o com os vizinhos
 	 */
 	private void createSocket() {
 		try {
@@ -174,16 +174,16 @@ public class Router {
 	}
 
 	/**
-	 * ConfiguraÁ„o do Roteador
+	 * Configura√ß√£o do Roteador
 	 * 
-	 * @return Configuracao do roteador
+	 * @return Configura√ß√£o do roteador
 	 */
 	public RouterConfiguration getRouterConfiguration() {
 		return new RouterConfiguration(id, port, address);
 	}
 
 	/**
-	 * Retorna uma referÍncia a Tabela de Roteamento
+	 * Retorna uma refer√™ncia a Tabela de Roteamento
 	 * 
 	 * @return Tabela de roteamento
 	 */
@@ -192,7 +192,7 @@ public class Router {
 	}
 
 	/**
-	 * Retorna Socket de comunicaÁ„o
+	 * Retorna Socket de comunica√ß√£o
 	 * 
 	 * @return Socket
 	 */
@@ -201,7 +201,7 @@ public class Router {
 	}
 
 	/**
-	 * Envia o vetor dist‚ncia para todos os nos vizinhos
+	 * Envia o vetor dist√¢ncia para todos os nos vizinhos
 	 */
 	public void sendMessage() {
 		sender.sendVector();
@@ -239,7 +239,7 @@ public class Router {
 	 * Repassa para a tabela de vetores com o novo vetor recebido
 	 * 
 	 * @param dv
-	 *            Vetor dist‚ncia recebido
+	 *            Vetor dist√¢ncia recebido
 	 */
 	public void updateDVTable(DistanceVector dv) {
 		// Marca o enlace como ativo e zera o timeout pois recebeu novo vetor

@@ -5,10 +5,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Respons·vel por enviar mensagens para os roteadores vizinhos. Isso pode
+ * Respons√°vel por enviar mensagens para os roteadores vizinhos. Isso pode
  * ocorrer de dois modos, periodicamente por um tempo pre-definido ou quando
  * quando o roteador precisa informar imediatamente os roteadores vizinhos
- * devido a mudanÁa no custo do vetor dist‚ncia, nesse caso utiliza-se o mÈtodo
+ * devido a mudan√ßa no custo do vetor dist√¢ncia, nesse caso utiliza-se o m√©todo
  * sendVector()
  * 
  * @author Lucas Medeiros
@@ -25,7 +25,7 @@ public class Sender implements Runnable {
 	 * Envia mensagens periodicas aos roteadores vizinhos. Utiliza outra thread.
 	 * 
 	 * @param router
-	 *            Roteador respons·vel por enviar as mensagens.
+	 *            Roteador respons√°vel por enviar as mensagens.
 	 */
 	public Sender(Router router, long sendDVTimeout) {
 		this.router = router;
@@ -47,7 +47,7 @@ public class Sender implements Runnable {
 	}
 
 	/**
-	 * Envia o vetor para todos os nÛs vizinhos
+	 * Envia o vetor para todos os n√≥s vizinhos
 	 */
 	public synchronized void sendVector() {
 		String vector = router.buildMessageToSend();

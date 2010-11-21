@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Respons·vel por ficar escutando os enlaces, receber as mensagens e repassar
+ * Respons√°vel por ficar escutando os enlaces, receber as mensagens e repassar
  * para o roteador
  * 
  * @author Lucas Medeiros
@@ -49,7 +49,7 @@ public class Receiver implements Runnable {
 	 * Fica escutando mensagens de outros roteadores. Utiliza outra thread.
 	 * 
 	 * @param router
-	 *            Roteador ao qual s„o direcionadas as mensagens recebidas.
+	 *            Roteador ao qual s√£o direcionadas as mensagens recebidas.
 	 */
 	public Receiver(Router router) {
 		this.router = router;
