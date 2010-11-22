@@ -10,7 +10,7 @@ parâmetros como argumentos de linha de comando. Para executar o roteador, há
 dois meios possíveis, um é utilizando o jar gerado e que foi entregue junto ao
 projeto ou realizar o build do código fonte e executar o "InitRouter". Aqui será
 mostrada as instruções para executar a partir do jar. Lembrando também que os
-arquivos de configuração router.config e enlaces.config precisar estar no mesmo
+arquivos de configuração router.config e enlaces.config precisam estar no mesmo
 diretório do jar.
 
 Instruções básicas:
