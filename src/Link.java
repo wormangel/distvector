@@ -39,8 +39,8 @@ public class Link {
 	/**
 	 * Marca o tempo em que o enlace conseguiu ser utilizado a última vez.
 	 * 
-	 * @param Momento
-	 *            da última atividade que ocorreu no enlace
+	 * @param last
+	 *            Momento da última atividade que ocorreu no enlace
 	 */
 	public void setLastActivity(long last) {
 		this.lastActivity = last;
@@ -70,7 +70,7 @@ public class Link {
 	/**
 	 * Retorna se o enlace se recuperou de uma queda ou não.
 	 * 
-	 * @return
+	 * @return Se recuperou de uma queda ou não
 	 */
 	public boolean getRecovery() {
 		return recovery;
