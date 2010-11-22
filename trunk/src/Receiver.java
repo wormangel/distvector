@@ -42,7 +42,6 @@ public class Receiver implements Runnable {
 
 		router.setLinkUp(routerID);
 		router.updateDVTable(vector);
-
 	}
 
 	/**

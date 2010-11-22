@@ -119,16 +119,15 @@ public class DVTable {
 
 		String recieved = (dVector != null && (router.getLogLevel() == LogLevel.UPDATE_ONLY
 				|| router.getLogLevel() == LogLevel.LOG_FULL || router
-				.getLogLevel() == LogLevel.FULL_RECIEVE)) ? "["
+				.getLogLevel() == LogLevel.FULL_RECEIVE)) ? "["
 				+ new Timestamp(new Date().getTime()) + "] Recieved vector: "
-				+ dVector.toString() + " by router " + dVector.getId() + ". "
-				: "";
+				+ dVector.toString() + ". " : "";
 
 		if (!compareVectorsAreEquals(vectorBeforeChange, selfDV)) {
 			// TODO Log
 			if (router.getLogLevel() == LogLevel.UPDATE_ONLY
 					|| router.getLogLevel() == LogLevel.LOG_FULL
-					|| router.getLogLevel() == LogLevel.FULL_RECIEVE) {
+					|| router.getLogLevel() == LogLevel.FULL_RECEIVE) {
 				System.out.println(recieved + "Cost changed to: "
 						+ selfDV.toString());
 			}
@@ -141,7 +140,7 @@ public class DVTable {
 		} else {
 			// TODO
 			if (router.getLogLevel() == LogLevel.LOG_FULL
-					|| router.getLogLevel() == LogLevel.FULL_RECIEVE) {
+					|| router.getLogLevel() == LogLevel.FULL_RECEIVE) {
 				System.out.println(recieved + "No change.");
 			}
 		}

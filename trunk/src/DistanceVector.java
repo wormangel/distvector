@@ -42,10 +42,9 @@ public class DistanceVector {
 		builder.append(this.getId() + ":[");
 
 		for (Integer key : distances.keySet()) {
-			if (key < 20) {
-				builder.append(key + "=");
-				builder.append(distances.get(key) + ", ");
-			}
+			builder.append(key + "=");
+			builder.append((distances.get(key).equals(Router.getNetworkSize())) ? "INF, "
+					: distances.get(key) + ", ");
 		}
 		builder = builder.reverse().delete(0, 2).reverse();
 		builder.append("]");
