@@ -32,7 +32,7 @@ public class InitRouter {
 		private static final long serialVersionUID = 1L;
 		{
 			put("uo", LogLevel.UPDATE_ONLY);
-			put("fr", LogLevel.FULL_RECIEVE);
+			put("fr", LogLevel.FULL_RECEIVE);
 			put("fs", LogLevel.FULL_SEND);
 			put("lf", LogLevel.LOG_FULL);
 			put("rt", LogLevel.ROUTER_TABLE);
@@ -57,7 +57,7 @@ public class InitRouter {
 		if (argsValue.equals("uo"))
 			return LogLevel.UPDATE_ONLY;
 		if (argsValue.equals("fr"))
-			return LogLevel.FULL_RECIEVE;
+			return LogLevel.FULL_RECEIVE;
 		if (argsValue.equals("fs"))
 			return LogLevel.FULL_SEND;
 		if (argsValue.equals("lf"))

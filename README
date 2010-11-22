@@ -48,6 +48,12 @@ de configuração router.config.
            não exibe a tabela de roteamento.
     * rt - Mostra na saída a tabela de roteamento atual. Só atualiza caso ocorra
            alguma mudança.
+    
+    OBS: Na saida o vetor aparece da seguinte forma: 
+    1:[0=INF, 1=0, 2=2, 3=3, 4=INF, 5=INF, 10=INF]
+    Isso indica que o vetor é do router de id 1 e que para o destino 0 ele tem
+custo igual a INF (de infinity), para destino 1 tem custo igual a 0, para destino
+2 tem custo igual a 2 e assim por diante.
            
     Em seguida temos o tempo de envio que determina de quanto em quanto tempo os
 vetores serão enviados para os vizinho. Isso NÃO elimina o envio imediato após
