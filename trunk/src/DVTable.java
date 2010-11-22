@@ -220,7 +220,8 @@ public class DVTable {
 			}
 			for (Integer k : vectorsRecieved.keySet()) {
 				if (!vectorsRecieved.get(k).getDistances().containsKey(key)) {
-					vectorsRecieved.get(k).putDistance(key, Router.getNetworkSize());
+					vectorsRecieved.get(k).putDistance(key,
+							Router.getNetworkSize());
 				}
 			}
 		}

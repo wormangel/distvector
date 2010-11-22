@@ -174,7 +174,7 @@ public class Router {
 	public LogLevel getLogLevel() {
 		return logLevel;
 	}
-	
+
 	/**
 	 * @return the networkSize
 	 */
