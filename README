@@ -4,5 +4,61 @@ Equipe:
 	Otacilio Lacerda
 	Pedro Yossis
 
-Para executar o roteador, � necess�rio passar os argumentos necess�rios para sua
-inicializa��o. Para ver os argumentos necess�rios passa o argumento "--help"
+O roteador pode funcionar em diversos tipos de nível de log e tem várias de suas
+configurações parametrizáveis. Sendo assim, foi implementado a captura desses
+parâmetros como argumentos de linha de comando. Para executar o roteador, há 
+dois meios possíveis, um é utilizando o jar gerado e que foi entregue junto ao
+projeto ou realizar o build do código fonte e executar o "InitRouter". Aqui será
+mostrada as instruções para executar a partir do jar. Lembrando também que os
+arquivos de configuração router.config e enlaces.config precisar estar no mesmo
+diretório do jar.
+
+Instruções básicas:
+usage: java -jar router.jar [-h] [-i <arg>] [-l <arg>] [-ns <arg>] [-s
+       <arg>] [-t <arg>]
+ -h,--help                 Help
+ -i,--id <arg>             Router id. (REQUIRED)
+ -l,--loglevel <arg>       Choose router log level. Possible values:
+                           (uo) Update only: logs only when the vector
+                           changes.
+                           (fr) Full recieve: logs everything that gets.
+                           (fs) Full send: logs everything that sent.
+                           (lf) Log full: logs everything.
+                           (rt) Router table: logs only router table.
+                           Default = uo (Update only.)
+ -ns,--networksize <arg>   Network diameter. Default = 9999
+ -s,--sendtime <arg>       Time to sent new vector (periodic time).
+                           Default = 1000ms
+ -t,--timeout <arg>        Timeout to detect link down (in milliseconds).
+                           Default = 5000ms
+                       
+    Como o próprio help do projeto já mostra, temos o ID do roteador como 
+argumento orbigatório e os demais como opcionais tendo seus valores default 
+escolhidos caso não sejam especificados. Quanto a descrição dos parâmetros:
+
+    Primeiramente temos o ID do roteador, o qual precisa estar contido no arquivo
+de configuração router.config.
+
+    Na sequência temos a opção de log que pode ser de 5 tipos:
+    * uo - Mostra na saída somente as atualizações do vetor e a partir de qual
+           vetor recebido a atualização ocorreu.
+    * fr - Mostra na saída todos os vetores que são recebidos pelo roteador.
+    * fs - Mostra na saída o vetor que esta sendo enviado para os vizinhos.
+    * lf - Mostra na saída as informações de todas as opções anteriores. Detalhe:
+           não exibe a tabela de roteamento.
+    * rt - Mostra na saída a tabela de roteamento atual. Só atualiza caso ocorra
+           alguma mudança.
+           
+    Em seguida temos o tempo de envio que determina de quanto em quanto tempo os
+vetores serão enviados para os vizinho. Isso NÃO elimina o envio imediato após
+a atualização de um vetor. São dois casos em que pode acontecer o envio.
+    
+    E seguida temos o tempo de timeout, que é o tempo para identificar que 
+algum enlace caiu.
+
+    E por último tempos o tamanho da rede, ou diâmetro da rede. Esse valor é
+utilizado para verificar a contagem ao infinito e para representar as distâncias
+inifinitas, ou destinos inalcansáveis. 
+
+ATENÇÃO: caso mude o diâmetro da rede para um roteador, todos os outros precisam
+ser configurados com o mesmo diâmetro.

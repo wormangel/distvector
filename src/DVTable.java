@@ -14,7 +14,6 @@ import java.util.HashMap;
  */
 public class DVTable {
 
-	static final Integer UNREACHABLE = 9999; // Diâmetro da rede.
 	private DistanceVector selfDV;
 	private HashMap<Integer, DistanceVector> vectorsRecieved;
 	private Router router;
@@ -43,7 +42,7 @@ public class DVTable {
 						link.getCost());
 			} else {
 				selfDV.putDistance(link.getRouterConnected().getId(),
-						UNREACHABLE);
+						Router.getNetworkSize());
 			}
 		}
 		// TODO Log
@@ -85,7 +84,7 @@ public class DVTable {
 					// Se estiver no modo de log da tabela de roteamento, salva
 					// o próximo salto de cada destino.
 					if (router.getLogLevel() == LogLevel.ROUTER_TABLE
-							&& neighborCost != UNREACHABLE) {
+							&& neighborCost != Router.getNetworkSize()) {
 						nextRouterMap.put(distanceTo, vectorID);
 					}
 				}
@@ -217,17 +216,17 @@ public class DVTable {
 		// no vetor deste.
 		for (Integer key : dVector.getDistances().keySet()) {
 			if (!selfDV.getDistances().containsKey(key)) {
-				selfDV.putDistance(key, UNREACHABLE);
+				selfDV.putDistance(key, Router.getNetworkSize());
 			}
 			for (Integer k : vectorsRecieved.keySet()) {
 				if (!vectorsRecieved.get(k).getDistances().containsKey(key)) {
-					vectorsRecieved.get(k).putDistance(key, UNREACHABLE);
+					vectorsRecieved.get(k).putDistance(key, Router.getNetworkSize());
 				}
 			}
 		}
 		for (Integer key : selfDV.getDistances().keySet()) {
 			if (!dVector.getDistances().containsKey(key)) {
-				dVector.putDistance(key, UNREACHABLE);
+				dVector.putDistance(key, Router.getNetworkSize());
 			}
 		}
 	}
@@ -237,7 +236,7 @@ public class DVTable {
 	 */
 	private void resetSelfDV() {
 		for (Integer key : selfDV.getDistances().keySet()) {
-			selfDV.putDistance(key, UNREACHABLE);
+			selfDV.putDistance(key, Router.getNetworkSize());
 		}
 		selfDV.putDistance(selfDV.getId(), 0);
 	}
