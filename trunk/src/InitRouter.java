@@ -146,6 +146,7 @@ public class InitRouter {
 	 */
 	public static void main(String[] args) {
 		Integer routerID;
+		Integer networkSize;
 		long timeout; // Tempo para identificar que um enlace caiu
 		long sendTime; // Tempo para enviar vetores (periódico)
 		LogLevel logLevel;
@@ -158,6 +159,8 @@ public class InitRouter {
 					"Timeout to detect link down (in milliseconds). Default = 5000ms"));
 			opt.addOption(new Option("s", "sendtime", true,
 					"Time to sent new vector (periodic time). Default = 1000ms"));
+			opt.addOption(new Option("ns", "networksize", true,
+			"Network diameter. Default = 9999"));
 
 			String logMessage = "Choose router log level. Possible values:"
 					+ "\n(uo) Update only: logs only when the vector changes."
@@ -181,6 +184,7 @@ public class InitRouter {
 			routerID = Integer.parseInt(cl.getOptionValue("id"));
 			timeout = Integer.parseInt(cl.getOptionValue("timeout", "5000"));
 			sendTime = Integer.parseInt(cl.getOptionValue("sendtime", "1000"));
+			networkSize = Integer.parseInt(cl.getOptionValue("networksize", "9999"));
 
 			logLevel = getLogLevel(cl.getOptionValue("loglevel", "uo"));
 
@@ -194,7 +198,7 @@ public class InitRouter {
 					+ "] Starting router '" + routerID + "'.  ");
 			try {
 				new Router(routersConfig.get(routerID), links, sendTime,
-						timeout, logLevel);
+						timeout, logLevel, networkSize);
 			} catch (Exception e) {
 				System.out.println("Incorrect router ID.");
 			}

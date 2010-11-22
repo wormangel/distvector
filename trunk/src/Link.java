@@ -64,7 +64,7 @@ public class Link {
 	 * @return the linkCost
 	 */
 	public Integer getCost() {
-		return isLinkUp() ? linkCost : DVTable.UNREACHABLE;
+		return isLinkUp() ? linkCost : Router.getNetworkSize();
 	}
 
 	/**

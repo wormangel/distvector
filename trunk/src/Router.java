@@ -24,6 +24,7 @@ public class Router {
 	private Sender sender;
 	private LogLevel logLevel;
 	private RouterTable routerTable;
+	private static Integer networkSize;
 
 	/**
 	 * Constroi o Roteador
@@ -35,13 +36,14 @@ public class Router {
 	 */
 	public Router(RouterConfiguration routerConfiguration,
 			ArrayList<Link> links, long sendTime, long timeout,
-			LogLevel logLevel) {
+			LogLevel logLevel, Integer size) {
 		this.id = routerConfiguration.getId();
 		this.port = routerConfiguration.getPort();
 		this.address = routerConfiguration.getAddress();
 		this.links = links;
 		this.timeout = timeout;
 		this.logLevel = logLevel;
+		networkSize = size;
 
 		routerTable = new RouterTable();
 		dvTable = new DVTable(this);
@@ -171,6 +173,13 @@ public class Router {
 	 */
 	public LogLevel getLogLevel() {
 		return logLevel;
+	}
+	
+	/**
+	 * @return the networkSize
+	 */
+	public static Integer getNetworkSize() {
+		return networkSize;
 	}
 
 	/**
